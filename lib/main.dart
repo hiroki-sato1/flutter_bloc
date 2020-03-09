@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/bloc/counter_bloc.dart';
 
 void main() => runApp(MyApp());
 
@@ -25,12 +26,12 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
+  CounterBloc _bloc = CounterBloc();
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+  @override
+  void dispose() {
+    _bloc.dispose();
+    super.dispose();
   }
 
   @override
@@ -46,15 +47,21 @@ class _MyHomePageState extends State<MyHomePage> {
             Text(
               'You have pushed the button this many times:',
             ),
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.display1,
-            ),
+            StreamBuilder(
+                stream: _bloc.stream,
+                initialData: 0,
+                builder: (context, snapshot) {
+                  int counter = snapshot.data;
+                  return Text(
+                    '$counter',
+                    style: Theme.of(context).textTheme.display1,
+                  );
+                }),
           ],
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
+        onPressed: _bloc.incrementCounter,
         tooltip: 'Increment',
         child: Icon(Icons.add),
       ), // This trailing comma makes auto-formatting nicer for build methods.
